@@ -85,6 +85,7 @@ public class RandomNumberGenerator {
         clients.put(name, client);
         System.out.println("Client registered successfully!");
     }
+
     // current write to file on option number 6 after client is registered doesn't save clients. a client needs to be registered each time
     private void writeCurrentNumbersToFile() {
         try (FileWriter writer = new FileWriter("current_numbers.txt", true)) {
@@ -94,13 +95,57 @@ public class RandomNumberGenerator {
                 String paymentType = clients.get(clientName).isOnAccount() ? "Invoice" : "Card at Pickup";
 
                 String output = String.format("Client: %s | Number: %06d | Part Type: %s | Payment Type: %s%n", clientName, num, partType, paymentType);
+
+                if (entryExistsInFile(output)) {
+                    updateEntryInFile(output);
+                } else {
                 writer.write(output);
+                }
             }
             System.out.println("Current numbers with client names have been written to the file.");
         } catch (IOException e) {
             System.err.println("Error writing to the file: " + e.getMessage());
         }
     }
+
+    private boolean entryExistsInFile(String entry) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("current_numbers.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.equals(entry)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading the file: " + e.getMessage());
+        }
+        return false;
+    }
+
+    private void updateEntryInFile(String entry) {
+        List<String> lines = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader("current_numbers.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.equals(entry)) {
+                    lines.add(entry);
+                } else {
+                    lines.add(line);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading the file: " + e.getMessage());
+        }
+
+        try (FileWriter writer = new FileWriter("current_numbers.txt")) {
+            for (String line : lines) {
+                writer.write(line + System.lineSeparator());
+            }
+        } catch (IOException e) {
+            System.err.println("Error writing to the file: " + e.getMessage());
+        }
+    }
+    
     private void viewCurrentClientsFromFile() {
         try (BufferedReader reader = new BufferedReader(new FileReader("current_numbers.txt"))){
             String line;
