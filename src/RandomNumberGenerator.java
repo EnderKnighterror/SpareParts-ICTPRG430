@@ -183,13 +183,12 @@ public class RandomNumberGenerator {
     private int displayMenuAndGetChoice(Scanner scanner) {
         System.out.println("\nMenu:");
         System.out.println("1. Generate Random Number for Existing Client");
-        System.out.println("2. Generate Random Number for Predetermined Part");
-        System.out.println("3. Print Current Numbers");
-        System.out.println("4. Remove Number (Order Picked Up)");
-        System.out.println("5. Register New Client");
-        System.out.println("6. Write Current Numbers to File");
-        System.out.println("7. Print current saved clients ");
-        System.out.println("8. Exit");
+        System.out.println("2. Print Current Numbers");
+        System.out.println("3. Remove Number (Order Picked Up)");
+        System.out.println("4. Register New Client");
+        System.out.println("5. Write Current Numbers to File");
+        System.out.println("6. Print current saved clients ");
+        System.out.println("7. Exit");
         System.out.print("Enter your choice: ");
         return scanner.nextInt();
     }
@@ -199,7 +198,7 @@ public class RandomNumberGenerator {
         do {
             choice = displayMenuAndGetChoice(scanner);
             switch (choice) {
-                case 1 -> {
+                case 1: {
                     System.out.print("Enter client name: ");
                     String existingClientName = scanner.next();
                     List<String> existingClientData = loadExistingClientDataFromFile();
@@ -224,33 +223,27 @@ public class RandomNumberGenerator {
                     }
                 }
 
-                case 2 -> {
-                    System.out.print("Enter part type (true for genuine, false for third-party): ");
-                    boolean isGenuinePart = scanner.nextBoolean();
-                    Client predeterminedClient = new Client("Predetermined Client", isGenuinePart, true, true);
-                    generateAndAddNumber(predeterminedClient);
-                }
-                case 3 -> printCurrentNumbers();
+                case 2: printCurrentNumbers();
 
-                case 4 -> {
+                case 3: {
                     System.out.print("Enter the number to remove (6 digits): ");
                     int numberToRemove = scanner.nextInt();
                     removeNumber(numberToRemove);
                 }
 
-                case 5 -> registerNewClient(scanner);
+                case 4: registerNewClient(scanner);
 
-                case 6 -> writeCurrentNumbersToFile();
+                case 5: writeCurrentNumbersToFile();
 
-                case 7 -> viewCurrentClientsFromFile();
+                case 6: viewCurrentClientsFromFile();
 
-                case 8 -> System.out.println("Exiting...");
+                case 7: System.out.println("Exiting...");
 
-                default -> {
+                default: {
                     System.out.println("Invalid choice. Please try again.");
                 }
             }
-        } while (choice != 8);
+        } while (choice != 7);
     }
     public static void main(String[] args) {
         RandomNumberGenerator generator = new RandomNumberGenerator();
