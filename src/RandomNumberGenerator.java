@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class RandomNumberGenerator {
+    // Sets for storing used numbers and lists for current numbers
     private final Set<Integer> usedNumbers;
     private final List<Integer> currentNumbers;
     private final Map<String, Client> clients;
@@ -15,26 +16,40 @@ public class RandomNumberGenerator {
         clients = new HashMap<>();
     }
 
-    // Method to generate 6 digit number
-    private int generateRandomNumber() {
+    /**
+     * Generates a unique 6-digit random number.
+     * Ensures that the generated number hasn't been used before.
+     * @return A unique 6-digit number.
+     */
+    int generateRandomNumber() {
         Random random = new Random();
         int num;
         do {
-            num = 100000 + random.nextInt(900000); // generates a random number between 100000 and 999999
+            // Generates a number between 100000 and 999999
+            num = 100000 + random.nextInt(900000);
         } while (usedNumbers.contains(num));
         usedNumbers.add(num);
         return num;
     }
 
-    //method to check if a number starts with 1
-    private boolean startsWithOne(int num) {
+    /**
+     * Checks if a number starts with the digit 1.
+     * @param num The number to check.
+     * @return true if the number starts with 1, false otherwise.
+     */
+    boolean startsWithOne(int num) {
         return String.valueOf(num).startsWith("1");
     }
 
-    // method to generate a random number and add it to the currentNumbers list
+    /**
+     * Generates a random number based on client requirements and adds it to the currentNumbers list.
+     * @param client The client for whom the number is being generated.
+     */
     private void generateAndAddNumber(Client client) {
         int num = generateRandomNumber();
         String paymentType = client.isOnAccount() ? "Invoice" : "Card at pickup";
+
+        // Generate number based on whether the part is genuine or not
         if (client.isGenuinePart()) {
             while (!startsWithOne(num)) {
                 num = generateRandomNumber();
@@ -50,7 +65,9 @@ public class RandomNumberGenerator {
         System.out.println(output);
     }
 
-    // method to print all the current numbers
+    /**
+     * Prints all current numbers.
+     */
     private void printCurrentNumbers() {
         System.out.println("\nCurrent Numbers:");
         for (int num : currentNumbers) {
@@ -58,35 +75,46 @@ public class RandomNumberGenerator {
         }
     }
 
-    // method to remove a number from the currentNumbers list when picked up
+    /**
+     * Removes a number from the currentNumbers list when an order is picked up.
+     * @param number The number to remove.
+     */
     private void removeNumber(int number) {
-        if (currentNumbers.contains(number)) {
-            currentNumbers.remove(Integer.valueOf(number));
-        }
+        currentNumbers.remove(Integer.valueOf(number));
     }
-    //method to reister a new client
+
+    /**
+     * Registers a new client by gathering their information through user input.
+     * @param scanner The Scanner object for reading user input.
+     */
     private void registerNewClient(Scanner scanner) {
         System.out.println("Enter client name: ");
         String name = scanner.next();
 
+        // Collecting information about the part's genuineness
         System.out.println("Is the Part Genuine? (yes/no): ");
         String genuineInput = scanner.next().toLowerCase();
         boolean isGenuinePart = genuineInput.equals("yes");
 
+        // Collecting information about the client's registration status
         System.out.println("Is the client registered? (yes/no):");
         String registeredInput = scanner.next().toLowerCase();
         boolean isRegistered = registeredInput.equals("yes");
 
+        // Collecting information about the client's payment method
         System.out.println("Is the client paying on account? (yes/no):");
         String onAccountInput = scanner.next().toLowerCase();
         boolean isOnAccount = onAccountInput.equals("yes");
 
+        // Creating and registering a new client
         Client client = new Client(name, isGenuinePart, isRegistered, isOnAccount);
         clients.put(name, client);
         System.out.println("Client registered successfully!");
     }
 
-    // current write to file on option number 6 after client is registered doesn't save clients. a client needs to be registered each time
+    /**
+     * Writes the current numbers and associated client details to a file.
+     */
     private void writeCurrentNumbersToFile() {
         try (FileWriter writer = new FileWriter("current_numbers.txt", true)) {
             for (int num : currentNumbers) {
@@ -96,10 +124,11 @@ public class RandomNumberGenerator {
 
                 String output = String.format("Client: %s | Number: %06d | Part Type: %s | Payment Type: %s%n", clientName, num, partType, paymentType);
 
+                // Check if the entry already exists in the file to avoid duplicates
                 if (entryExistsInFile(output)) {
                     updateEntryInFile(output);
                 } else {
-                writer.write(output);
+                    writer.write(output);
                 }
             }
             System.out.println("Current numbers with client names have been written to the file.");
@@ -108,6 +137,11 @@ public class RandomNumberGenerator {
         }
     }
 
+    /**
+     * Checks if a specific entry already exists in the file.
+     * @param entry The entry to check.
+     * @return true if the entry exists, false otherwise.
+     */
     private boolean entryExistsInFile(String entry) {
         try (BufferedReader reader = new BufferedReader(new FileReader("current_numbers.txt"))) {
             String line;
@@ -122,6 +156,10 @@ public class RandomNumberGenerator {
         return false;
     }
 
+    /**
+     * Updates an existing entry in the file.
+     * @param entry The entry to update.
+     */
     private void updateEntryInFile(String entry) {
         List<String> lines = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader("current_numbers.txt"))) {
@@ -137,6 +175,7 @@ public class RandomNumberGenerator {
             System.err.println("Error reading the file: " + e.getMessage());
         }
 
+        // Rewrite the file with the updated content
         try (FileWriter writer = new FileWriter("current_numbers.txt")) {
             for (String line : lines) {
                 writer.write(line + System.lineSeparator());
@@ -145,7 +184,10 @@ public class RandomNumberGenerator {
             System.err.println("Error writing to the file: " + e.getMessage());
         }
     }
-    
+
+    /**
+     * Displays the current clients saved in the file.
+     */
     private void viewCurrentClientsFromFile() {
         try (BufferedReader reader = new BufferedReader(new FileReader("current_numbers.txt"))){
             String line;
@@ -157,6 +199,11 @@ public class RandomNumberGenerator {
             System.err.println("Error reading the file: " + e.getMessage());
         }
     }
+
+    /**
+     * Loads existing client data from the file.
+     * @return A list of strings, each representing a line (client data) from the file.
+     */
     private List<String> loadExistingClientDataFromFile() {
         List<String> existingClientData = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader("current_numbers.txt"))) {
@@ -170,7 +217,11 @@ public class RandomNumberGenerator {
         return existingClientData;
     }
 
-    // helper to get client info
+    /**
+     * Retrieves the client's name associated with a given number.
+     * @param number The number associated with the client.
+     * @return The name of the client or "Unknown Client" if not found.
+     */
     private String getClientNameByNumber(int number) {
         for (Map.Entry<String, Client> entry : clients.entrySet()) {
             if (currentNumbers.contains(number) && entry.getValue().getName().equals(entry.getKey())) {
@@ -245,10 +296,13 @@ public class RandomNumberGenerator {
             }
         } while (choice != 7);
     }
+    /**
+     * Main method to run the RandomNumberGenerator program.
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         RandomNumberGenerator generator = new RandomNumberGenerator();
         generator.run();
     }
-
 }
 
