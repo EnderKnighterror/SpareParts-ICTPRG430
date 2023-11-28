@@ -6,9 +6,9 @@ import java.util.*;
 
 public class RandomNumberGenerator {
     // Sets for storing used numbers and lists for current numbers
-    private final Set<Integer> usedNumbers;
+    final Set<Integer> usedNumbers;
     private final List<Integer> currentNumbers;
-    private final Map<String, Client> clients;
+    final Map<String, Client> clients;
 
     public RandomNumberGenerator() {
         usedNumbers = new HashSet<>();
@@ -34,11 +34,11 @@ public class RandomNumberGenerator {
 
     /**
      * Checks if a number starts with the digit 1.
-     * @param num The number to check.
+     * @param number The number to check.
      * @return true if the number starts with 1, false otherwise.
      */
-    boolean startsWithOne(int num) {
-        return String.valueOf(num).startsWith("1");
+    public boolean startsWithOne(int number) {
+        return String.valueOf(number).startsWith("1");
     }
 
     /**
@@ -87,7 +87,7 @@ public class RandomNumberGenerator {
      * Registers a new client by gathering their information through user input.
      * @param scanner The Scanner object for reading user input.
      */
-    private void registerNewClient(Scanner scanner) {
+    void registerNewClient(Scanner scanner) {
         System.out.println("Enter client name: ");
         String name = scanner.next();
 
@@ -262,6 +262,7 @@ public class RandomNumberGenerator {
                             clientExists = true;
                             break;
                         }
+
                     }
 
                     if (!clientExists) {
@@ -272,26 +273,45 @@ public class RandomNumberGenerator {
                             generateAndAddNumber(existingClient);
                         }
                     }
+                    break;
                 }
 
-                case 2: printCurrentNumbers();
+                case 2: {
+                    printCurrentNumbers();
+                    break;
+                }
+
 
                 case 3: {
                     System.out.print("Enter the number to remove (6 digits): ");
                     int numberToRemove = scanner.nextInt();
                     removeNumber(numberToRemove);
+                    break;
                 }
 
-                case 4: registerNewClient(scanner);
+                case 4: {
+                    registerNewClient(scanner);
+                    break;  // Add this break statement
+                }
 
-                case 5: writeCurrentNumbersToFile();
+                case 5: {
+                    writeCurrentNumbersToFile();
+                    break;  // Add this break statement
+                }
 
-                case 6: viewCurrentClientsFromFile();
+                case 6: {
+                    viewCurrentClientsFromFile();
+                    break;  // Add this break statement
+                }
 
-                case 7: System.out.println("Exiting...");
+                case 7: {
+                    System.out.println("Exiting...");
+                    break;  // Add this break statement
+                }
 
                 default: {
                     System.out.println("Invalid choice. Please try again.");
+                    break;
                 }
             }
         } while (choice != 7);

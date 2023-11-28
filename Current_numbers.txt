@@ -8,3 +8,5 @@ Client: joe | Number: 209502 | Part Type: Third-Party Part | Payment Type: Invoi
 
 
 Client: Jack | Number: 505130 | Part Type: Genuine Part | Payment Type: Invoice
+Client: emily | Number: 937297 | Part Type: Third-Party Part | Payment Type: Card at Pickup
+Client: simon | Number: 186785 | Part Type: Genuine Part | Payment Type: Invoice
